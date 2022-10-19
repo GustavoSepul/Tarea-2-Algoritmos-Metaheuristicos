@@ -1,3 +1,4 @@
+from math import e
 from pickle import NONE
 import numpy as np
 import pandas as pd
@@ -15,12 +16,8 @@ else:
     sys.exit(0)
 
 
-
-
-
-poblacion = np.zeros((n,52),int)
-for k in range(n):
-	poblacion[k]=np.arange(0,52)
-	np.random.shuffle(poblacion[k])
+poblacion = np.full((n, 52), -1)
+for i in range(n):
+    poblacion[i][0] = np.random.randint(52)
 print("Poblacion inicial :")
 print(poblacion)
