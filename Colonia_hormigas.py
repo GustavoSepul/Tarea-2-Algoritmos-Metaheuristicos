@@ -1,5 +1,3 @@
-from math import e
-from pickle import NONE
 import numpy as np
 import pandas as pd
 import sys 
@@ -7,6 +5,13 @@ import sys
 
 # df = pd.read_csv('berlin52.txt', sep =" ", header = None)
 # print(df)
+# semilla 
+# tamaño colonia
+# numero iteraciones
+# tasa de evaporacion
+# factor de importancia euristica (2,5)
+# probabilidad exploracion explotacion (0 - 1)
+# archivo de entrada
 
 if len(sys.argv) == 3:
     seed = int(sys.argv[1])
