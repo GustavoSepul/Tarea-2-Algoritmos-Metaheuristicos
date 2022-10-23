@@ -36,12 +36,6 @@ print(coordenadas)
 cant_variables = coordenadas.shape[0]
 
 
-poblacion = np.full((h, cant_variables), fill_value=-1, dtype=int)
-for i in range(h):
-    poblacion[i][0] = np.random.randint(cant_variables)
-print("Poblacion inicial :")
-print(poblacion)
-
 
 distancias = np.full((cant_variables,cant_variables), fill_value=-1.0,dtype=float)
 for i in range(cant_variables-1):
@@ -71,7 +65,23 @@ Tij0=1/(cant_variables*mejor_costo)
 matriz_feromona = np.full_like(distancias,fill_value=Tij0,dtype=float)
 print(matriz_feromona)
 
+
+lugares = np.arange(len(distancias))
+
+
+
 generacion = 0
 while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 7544.3659):
     generacion+=1
     print('Generacion: ',generacion)
+    poblacion = np.full((h, cant_variables), fill_value=-1, dtype=int)
+    for i in range(h):
+        poblacion[i][0] = np.random.randint(cant_variables)
+    print("Poblacion inicial :")
+    print(poblacion)
+    for i in range(len(poblacion)):
+        filas = poblacion[i][:]
+        print("R: ",filas)
+        visitados = np.where(filas != -1)
+        visitados = [poblacion[i][item] for item in visitados]   
+        print('visitados: ', visitados)
