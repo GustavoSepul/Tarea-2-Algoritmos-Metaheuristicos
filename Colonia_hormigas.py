@@ -14,14 +14,28 @@ import sys
 # probabilidad exploracion explotacion (0 - 1)
 # archivo de entrada
 
-if len(sys.argv) == 5:
+if len(sys.argv) == 8:
     seed = int(sys.argv[1])
     h = int(sys.argv[2])
     itereaciones = int(sys.argv[3])
-    archivo = str(sys.argv[4])
-    print(seed, h, archivo)
+    tasa_evap = int(sys.argv[4])
+    importancia_heuristica = float(sys.argv[5])
+    probabilidad_exp = int(sys.argv[6])
+    archivo = str(sys.argv[7])
+    print('Semilla: ', seed)
+    print('Tamaño poblacion: ', h)
+    print('Numero iteraciones: ', itereaciones)
+    print('Tasa de evaporacion: ', tasa_evap)
+    print('Peso del valor de heuristica: ', importancia_heuristica)
+    print('Probabilidad de exploracion: ', probabilidad_exp)
+    print('Matriz: ', archivo)
 else:
     sys.exit(0)
+
+np.random.seed(seed)
+tasa_evap = tasa_evap/100
+probabilidad_exp = probabilidad_exp/100
+
 
 def Calcular_costo(n,s,c):
     aux = c[s[n-1]][s[0]]
@@ -29,18 +43,18 @@ def Calcular_costo(n,s,c):
         aux += c[s[i]][s[i+1]]
     return aux
 
+def Valor_FeromonaxHeuristica(heuristica, matriz_feromona, memoria):
+    for k in range(h):
+        TxN = memoria[k]*matriz_feromona[poblacion[k][i]]*(heuristica[poblacion[k][i]]**importancia_heuristica)
+    return TxN
+
+
 coordenadas = pd.read_table(archivo, header = None,delim_whitespace=True, skiprows=6, skipfooter=2, engine='python')
 coordenadas = coordenadas.drop(columns =0,axis=1).to_numpy()
 print("Matriz Coordenadas: ")
 print(coordenadas)
 cant_variables = coordenadas.shape[0]
 
-
-poblacion = np.full((h, cant_variables), fill_value=-1, dtype=int)
-for i in range(h):
-    poblacion[i][0] = np.random.randint(cant_variables)
-print("Poblacion inicial :")
-print(poblacion)
 
 
 distancias = np.full((cant_variables,cant_variables), fill_value=-1.0,dtype=float)
@@ -71,7 +85,26 @@ Tij0=1/(cant_variables*mejor_costo)
 matriz_feromona = np.full_like(distancias,fill_value=Tij0,dtype=float)
 print(matriz_feromona)
 
+
+lugares = np.arange(len(distancias))
+
+
+
 generacion = 0
 while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 7544.3659):
     generacion+=1
     print('Generacion: ',generacion)
+    poblacion = np.full((h, cant_variables), fill_value=-1, dtype=int)
+    memoria = np.full_like(poblacion,1,dtype=int)
+    for i in range(h):
+        aux = np.random.randint(cant_variables)
+        poblacion[i][0] = aux
+        memoria[i][aux] = 0
+    print("Poblacion inicial :")
+    print(poblacion)
+    
+    print("Memoria: ")
+    print(memoria)
+
+       
+
