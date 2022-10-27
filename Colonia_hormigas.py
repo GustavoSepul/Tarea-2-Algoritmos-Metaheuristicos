@@ -1,3 +1,4 @@
+from traceback import print_tb
 import numpy as np
 import pandas as pd
 import sys 
@@ -20,21 +21,21 @@ if len(sys.argv) == 8:
     itereaciones = int(sys.argv[3])
     tasa_evap = int(sys.argv[4])
     importancia_heuristica = float(sys.argv[5])
-    probabilidad_exp = int(sys.argv[6])
+    q0 = int(sys.argv[6])
     archivo = str(sys.argv[7])
     print('Semilla: ', seed)
     print('Tamaño poblacion: ', h)
     print('Numero iteraciones: ', itereaciones)
     print('Tasa de evaporacion: ', tasa_evap)
     print('Peso del valor de heuristica: ', importancia_heuristica)
-    print('Probabilidad de exploracion: ', probabilidad_exp)
+    print('Probabilidad de exploracion: ', q0)
     print('Matriz: ', archivo)
 else:
     sys.exit(0)
 
 np.random.seed(seed)
 tasa_evap = tasa_evap/100
-probabilidad_exp = probabilidad_exp/100
+q0 = q0/100
 
 
 def Calcular_costo(n,s,c):
@@ -95,20 +96,34 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
     print('Generacion: ',generacion)
     poblacion = np.full((h, cant_variables), fill_value=-1, dtype=int)
     memoria = np.full_like(poblacion,1,dtype=int)
-    trayectoria = np.full_like(poblacion,1,dtype=int)
     for i in range(h):
         aux = np.random.randint(cant_variables)
         poblacion[i][0] = aux
         memoria[i][aux] = 0
     print("Poblacion inicial :")
     print(poblacion)
-    print("tray: ", trayectoria)
     print("Memoria: ")
     print(memoria)
 
-    for j in range(cant_variables):
+
+    for i in range(cant_variables-1):
         for k in range(h):
-            TxN = Valor_FeromonaxHeuristica(heuristica,matriz_feromona,memoria,k)
-            index = np.where(TxN == np.amax(TxN))[0]
-            memoria[k][index] = 0
-            trayectoria[k][j] = index[0]
+            if np.random.rand() <= q0:
+                TxN = Valor_FeromonaxHeuristica(heuristica,matriz_feromona,memoria,k)
+                j0 = np.random.choice(np.where(TxN == np.amax(TxN))[0])
+                memoria[k][j0] = 0
+                poblacion[k][i+1]= j0
+            else:
+                TxN = Valor_FeromonaxHeuristica(heuristica,matriz_feromona,memoria,k)
+                total = np.sum(TxN)
+                ruleta = TxN/total
+                print("TxN: ")
+                print(TxN)
+                print("total: ")
+                print(total)
+                print("ruleta: ")
+                print(ruleta)
+    print("Poblacion: ")
+    print(poblacion)
+    print("Memoria: ")
+    print(memoria)
