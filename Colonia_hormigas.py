@@ -86,8 +86,21 @@ Tij0=1/(cant_variables*mejor_costo)
 matriz_feromona = np.full_like(distancias,fill_value=Tij0,dtype=float)
 # print("Matris feromona: ",matriz_feromona)
 
+def feromona_local(h, k):
+    feromona_local = ((1-tasa_evap)*(matriz_feromona[h][k])) + tasa_evap*Tij0
+    return feromona_local
 
-
+def feromona_global(n, mejor_solucion, mejor_feromona, solucion_costo):
+    for i in range(n)
+        for j in range(n)
+            posicion_i = np.where(mejor_solucion == i)
+            posicion_i = int(posicion_i[0])
+            if(posicion_i <  cant_variables-1)
+                if(mejor_solucion[posicion_i+1] == j)
+                    mejor_feromona[i][j] = ((1-tasa_evap)*mejor_feromona[i][j]) + (tasa_evap*(1/solucion_costo))
+                else:
+                    mejor_feromona[i][j] = ((1-tasa_evap)*mejor_feromona[i][j]) + 0
+    return mejor_feromona
 
 
 generacion = 0
