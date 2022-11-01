@@ -89,7 +89,7 @@ print("Matriz feromona: ",matriz_feromona)
 
 
 
-
+print("mejor: ", mejor_costo)
 generacion = 0
 while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 7544.3659):
     generacion+=1
@@ -138,12 +138,22 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
         # matriz_feromona[poblacion[k][0]][poblacion[k][-1]] = matriz_feromona[poblacion[k][-1]][poblacion[k][0]]
         # print("Memoria: ")
         # print(memoria)
-    print("Poblacion: ")
-    print(poblacion)
-    print("Memoria: ")
-    print(memoria)
+    
+    for i in range(h):
+        aux = Calcular_costo(cant_variables,poblacion[i][:],distancias)
+        print("aux: ", aux)
+        if aux < mejor_costo:
+            mejor_costo = aux
+            mejor_solucion = poblacion[i][:]    
+    
+    # print("Poblacion: ")
+    # print(poblacion)
+    # print("Memoria: ")
+    # print(memoria)
     # a = np.sort(poblacion)
     # print("Poblacion: ")
     # a = a+1
     # print(a)
     # print("Matriz feromona: ",matriz_feromona)
+    
+    print("mejor: ", mejor_costo)
