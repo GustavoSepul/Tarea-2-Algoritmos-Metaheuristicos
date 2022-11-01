@@ -84,7 +84,7 @@ solucionMejorIteracion = 0
 Tij0=1/(cant_variables*mejor_costo)
 # print("Tij0: ", Tij0)
 matriz_feromona = np.full_like(distancias,fill_value=Tij0,dtype=float)
-# print("Matris feromona: ",matriz_feromona)
+print("Matriz feromona: ",matriz_feromona)
 
 
 
@@ -110,30 +110,40 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
         for k in range(h):
             if np.random.rand() <= q0:
                 TxN = Valor_FeromonaxHeuristica(heuristica,matriz_feromona,memoria,k)
-                j0 = np.random.choice(np.where(TxN == np.amax(TxN))[0])
+                j0 = np.random.choice(np.where(TxN == TxN.max())[0])
+                # print("j0", j0)
                 memoria[k][j0] = 0
                 poblacion[k][i+1]= j0
-                print("j0", j0)
+
             else:
                 TxN = Valor_FeromonaxHeuristica(heuristica,matriz_feromona,memoria,k)
                 total = np.sum(TxN)
                 ruleta = TxN/total
-                r=0
                 ruleta = np.array(ruleta)
                 ruleta = np.cumsum(ruleta)
-                print("ruleta: ")
-                print(ruleta)
+                # print("ruleta: ")
+                # print(ruleta)
                 rand = np.random.rand()
-                print("rand: ", rand)
-                pos = np.where(ruleta < rand)
-                print("pos",pos[0][-1])
-                memoria[k][pos[0][-1]] = 0
-                poblacion[k][i+1]= pos[0][-1]
-            matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(tasa_evap*Tij0)
-            matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
-        matriz_feromona[poblacion[k][-1]][poblacion[k][0]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(tasa_evap*Tij0)
-        matriz_feromona[poblacion[k][0]][poblacion[k][-1]] = matriz_feromona[poblacion[k][-1]][poblacion[k][0]]
+                # print("rand: ", rand)
+                if ruleta[0] > rand:
+                    pos[0][-1]= 0
+                else:
+                    pos = np.where(ruleta <= rand)
+                # print("pos: ",pos[0][-1])
+                memoria[k][pos[0][-1]+1] = 0
+                poblacion[k][i+1]= pos[0][-1]+1
+        #     matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*Tij0)
+        #     matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
+        # matriz_feromona[poblacion[k][-1]][poblacion[k][0]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(tasa_evap*Tij0)
+        # matriz_feromona[poblacion[k][0]][poblacion[k][-1]] = matriz_feromona[poblacion[k][-1]][poblacion[k][0]]
+        # print("Memoria: ")
+        # print(memoria)
     print("Poblacion: ")
     print(poblacion)
     print("Memoria: ")
     print(memoria)
+    # a = np.sort(poblacion)
+    # print("Poblacion: ")
+    # a = a+1
+    # print(a)
+    # print("Matriz feromona: ",matriz_feromona)
