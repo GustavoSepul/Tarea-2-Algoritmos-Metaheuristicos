@@ -94,6 +94,7 @@ generacion = 0
 while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 7544.3659):
     generacion+=1
     print('Generacion: ',generacion)
+    # Asignar randómicamente las hormigas en los vértices del grafo
     poblacion = np.full((h, cant_variables), fill_value=-1, dtype=int)
     memoria = np.full_like(poblacion,1,dtype=int)
     for i in range(h):
@@ -102,22 +103,27 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
         memoria[i][aux] = 0
     print("Poblacion inicial :")
     print(poblacion)
-    print("Memoria: ")
-    print(memoria)
+    # print("Memoria: ")
+    # print(memoria)
 
 
     for i in range(cant_variables-1):
         for k in range(h):
+            #Seleccionar el próximo segmento en el grafo
             if np.random.rand() <= q0:
                 TxN = Valor_FeromonaxHeuristica(heuristica,matriz_feromona,memoria,k)
                 j0 = np.random.choice(np.where(TxN == TxN.max())[0])
                 # print("j0", j0)
                 memoria[k][j0] = 0
                 poblacion[k][i+1]= j0
-
+                #Actualizar la feromona en cada segmento según la Ecuación. 4
+                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*(1/mejor_costo))
+                matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
             else:
+            #Ruleta
                 TxN = Valor_FeromonaxHeuristica(heuristica,matriz_feromona,memoria,k)
                 total = np.sum(TxN)
+                pos = np.empty((1, 1), int)
                 ruleta = TxN/total
                 ruleta = np.array(ruleta)
                 ruleta = np.cumsum(ruleta)
@@ -129,31 +135,47 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
                     pos[0][-1]= 0
                 else:
                     pos = np.where(ruleta <= rand)
-                # print("pos: ",pos[0][-1])
+                # print("pos: ",pos[0])
                 memoria[k][pos[0][-1]+1] = 0
                 poblacion[k][i+1]= pos[0][-1]+1
-        #     matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*Tij0)
-        #     matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
-        # matriz_feromona[poblacion[k][-1]][poblacion[k][0]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(tasa_evap*Tij0)
-        # matriz_feromona[poblacion[k][0]][poblacion[k][-1]] = matriz_feromona[poblacion[k][-1]][poblacion[k][0]]
+                #Actualizar la feromona en cada segmento según la Ecuación. 4
+                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*(1/mejor_costo))
+                matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
+            matriz_feromona[poblacion[k][-1]][poblacion[k][0]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(tasa_evap*(1/mejor_costo))
+            matriz_feromona[poblacion[k][0]][poblacion[k][-1]] = matriz_feromona[poblacion[k][-1]][poblacion[k][0]]
         # print("Memoria: ")
         # print(memoria)
     
+    #Actualizar la mejor solución del proceso hasta la iteración actual
     for i in range(h):
         aux = Calcular_costo(cant_variables,poblacion[i][:],distancias)
-        print("aux: ", aux)
+        # print("aux: ", aux)
         if aux < mejor_costo:
             mejor_costo = aux
-            mejor_solucion = poblacion[i][:]    
+            mejor_solucion = poblacion[i][:]
+            
+    #Actualizar feromona en segmentos de la mejor solución según la Ecuación. 3
+    for i in range(cant_variables):
+        for j in range(cant_variables):
+            indexI = np.where(mejor_solucion == i)
+            indexI = int(indexI[0])
+            if(indexI < cant_variables-1): 
+                if((mejor_solucion[indexI+1]) == j):
+                    matriz_feromona[i][j] = ((1-tasa_evap)*matriz_feromona[i][j]) + (tasa_evap*Tij0)
+                else:
+                    matriz_feromona[i][j] = ((1-tasa_evap)*matriz_feromona[i][j]) + 0   
+
     
-    # print("Poblacion: ")
-    # print(poblacion)
-    # print("Memoria: ")
-    # print(memoria)
+    
+    
+# print("Poblacion: ")
+# print(poblacion)
+# print("Memoria: ")
+# print(memoria)
     # a = np.sort(poblacion)
     # print("Poblacion: ")
     # a = a+1
     # print(a)
     # print("Matriz feromona: ",matriz_feromona)
     
-    print("mejor: ", mejor_costo)
+print("mejor: ", mejor_costo)
