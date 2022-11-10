@@ -2,19 +2,8 @@ from traceback import print_tb
 import numpy as np
 import pandas as pd
 import sys 
+import time
 
-
-
-# df = pd.read_csv('berlin52.txt', sep =" ", header = None)
-# print(df)
-# semilla 
-# tamaño colonia
-# numero iteraciones
-# tasa de evaporacion
-# factor de importancia euristica (2,5)
-# probabilidad exploracion explotacion (0 - 1)
-# archivo de entrada
-# python.exe .\Colonia_hormigas.py 1 100 500 10 2.5 90 berlin52.txt
 
 if len(sys.argv) == 8:
     seed = int(sys.argv[1])
@@ -37,7 +26,7 @@ else:
 np.random.seed(seed)
 tasa_evap = tasa_evap/100
 q0 = q0/100
-
+tiempo_proceso_ini = time.time()
 
 def Calcular_costo(n,s,c):
     aux = c[s[n-1]][s[0]]
@@ -164,11 +153,14 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
                     matriz_feromona[i][j] = ((1-tasa_evap)*matriz_feromona[i][j]) + 0   
 
     
-    
+
     
 # print("Poblacion: ")
 # print(poblacion)
 # print("Memoria: ")
 # print(memoria)
-print("mejor solucion", mejor_solucion)
-print("mejor costo: ", mejor_costo)
+print("Mejor solucion:")
+print(mejor_solucion)
+print("Mejor costo: ", (np.round(mejor_costo,decimals=4)))
+tiempo_proceso_fin = time.time()
+print("Tiempo de busqueda: ", round(tiempo_proceso_fin-tiempo_proceso_ini, 3), "segundos")
