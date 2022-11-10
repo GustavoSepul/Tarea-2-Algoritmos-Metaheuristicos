@@ -14,6 +14,7 @@ import sys
 # factor de importancia euristica (2,5)
 # probabilidad exploracion explotacion (0 - 1)
 # archivo de entrada
+# python.exe .\Colonia_hormigas.py 1 100 500 10 2.5 90 berlin52.txt
 
 if len(sys.argv) == 8:
     seed = int(sys.argv[1])
@@ -84,6 +85,7 @@ solucionMejorIteracion = 0
 Tij0=1/(cant_variables*mejor_costo)
 # print("Tij0: ", Tij0)
 matriz_feromona = np.full_like(distancias,fill_value=Tij0,dtype=float)
+
 print("Matriz feromona: ",matriz_feromona)
 
 
@@ -101,8 +103,8 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
         aux = np.random.randint(cant_variables)
         poblacion[i][0] = aux
         memoria[i][aux] = 0
-    print("Poblacion inicial :")
-    print(poblacion)
+    # print("Poblacion inicial :")
+    # print(poblacion)
     # print("Memoria: ")
     # print(memoria)
 
@@ -117,7 +119,7 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
                 memoria[k][j0] = 0
                 poblacion[k][i+1]= j0
                 #Actualizar la feromona en cada segmento según la Ecuación. 4
-                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*(1/mejor_costo))
+                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*Tij0)
                 matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
             else:
             #Ruleta
@@ -139,9 +141,9 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
                 memoria[k][pos[0][-1]+1] = 0
                 poblacion[k][i+1]= pos[0][-1]+1
                 #Actualizar la feromona en cada segmento según la Ecuación. 4
-                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*(1/mejor_costo))
+                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*Tij0)
                 matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
-            matriz_feromona[poblacion[k][-1]][poblacion[k][0]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(tasa_evap*(1/mejor_costo))
+            matriz_feromona[poblacion[k][-1]][poblacion[k][0]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(tasa_evap*Tij0)
             matriz_feromona[poblacion[k][0]][poblacion[k][-1]] = matriz_feromona[poblacion[k][-1]][poblacion[k][0]]
         # print("Memoria: ")
         # print(memoria)
@@ -157,11 +159,11 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
     #Actualizar feromona en segmentos de la mejor solución según la Ecuación. 3
     for i in range(cant_variables):
         for j in range(cant_variables):
-            indexI = np.where(mejor_solucion == i)
-            indexI = int(indexI[0])
-            if(indexI < cant_variables-1): 
-                if((mejor_solucion[indexI+1]) == j):
-                    matriz_feromona[i][j] = ((1-tasa_evap)*matriz_feromona[i][j]) + (tasa_evap*Tij0)
+            posicion_mejor = np.where(mejor_solucion == i)
+            posicion_mejor = int(posicion_mejor[0])
+            if(posicion_mejor < cant_variables-1): 
+                if((mejor_solucion[posicion_mejor+1]) == j):
+                    matriz_feromona[i][j] = ((1-tasa_evap)*matriz_feromona[i][j]) + (tasa_evap*(1/mejor_costo))
                 else:
                     matriz_feromona[i][j] = ((1-tasa_evap)*matriz_feromona[i][j]) + 0   
 
@@ -172,10 +174,5 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
 # print(poblacion)
 # print("Memoria: ")
 # print(memoria)
-    # a = np.sort(poblacion)
-    # print("Poblacion: ")
-    # a = a+1
-    # print(a)
-    # print("Matriz feromona: ",matriz_feromona)
-    
-print("mejor: ", mejor_costo)
+print("mejor solucion", mejor_solucion)
+print("mejor costo: ", mejor_costo)
