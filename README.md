@@ -20,18 +20,21 @@
  * Para bajar el programa haga click en el siguiente [Link](https://github.com/GustavoSepul/Tarea-2-Algoritmos-Metaheuristicos/archive/refs/heads/main.zip)
 
 ## Ejecución del programa
- ```
- python.exe .\Colonia_hormigas.py 1 100 500 10 2.5 90 berlin52.txt
- ```
 
-## Definición de Variables
-* ***Seed***, el cuál sera un número real randomico mayor a 0.
-* ***Tamaño colonia***, el cuál sera un número entero mayor que 1.
-* ***Número de Iteraciones***, el cuál sera un número entero a criterio del usuario.
-* ***Tasa de evaporación***, el cuál sera un número entero entre 0 y 100 (10%).
-* ***Factor de importancia euristica***, el cuál sera un número real entre 2 y 5 (2,5).
-* ***Probabilidad de exploración/explotación***, el cuál sera un número real entre 0 y 100 (90%).
-* ***Archivo de entrada***, nombre del archivo con las coordenadas de los puntos (berlin52.txt).
+- Para ejecutar el codigo se debe ejecutar el siguiente comando: 
+```
+python ./n-reinas.py Seed Tamaño_colonia Número_Iteraciones Tasa_evaporación Factor_euristica Probabilidad_exploración Archivo_entrada
+```
+
+
+- Donde:
+    - ***Seed***, el cuál sera un número real randomico mayor a 0.
+    - ***Tamaño_colonia***, el cuál sera un número entero mayor que 1.
+    - ***Número_Iteraciones***, el cuál sera un número entero a criterio del usuario.
+    - ***Tasa_evaporación***, el cuál sera un número entero entre 0 y 100 (10%).
+    - ***Factor_euristica***, el cuál sera un número real entre 2 y 5 (2,5).
+    - ***Probabilidad_exploración***, el cuál sera un número real entre 0 y 100 (90%).
+    - ***Archivo_entrada***, nombre del archivo con las coordenadas de los puntos (berlin52.txt).
 
 
 
@@ -39,7 +42,6 @@
 ## Ejemplo
 ```
 python.exe .\Colonia_hormigas.py 1 100 500 10 2.5 90 berlin52.txt
-
 ```
 ## Resultados
 ```
