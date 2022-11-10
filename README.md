@@ -39,7 +39,6 @@
 ## Ejemplo
 ```
 python.exe .\Colonia_hormigas.py 1 100 500 10 2.5 90 berlin52.txt
-
 ```
 ## Resultados
 ```
