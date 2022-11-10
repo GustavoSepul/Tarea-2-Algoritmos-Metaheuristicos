@@ -86,12 +86,8 @@ Tij0=1/(cant_variables*mejor_costo)
 # print("Tij0: ", Tij0)
 matriz_feromona = np.full_like(distancias,fill_value=Tij0,dtype=float)
 
-print("Matriz feromona: ",matriz_feromona)
-
-
-
-
-print("mejor: ", mejor_costo)
+# print("Matriz feromona: ",matriz_feromona)
+# print("mejor: ", mejor_costo)
 generacion = 0
 while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 7544.3659):
     generacion+=1
