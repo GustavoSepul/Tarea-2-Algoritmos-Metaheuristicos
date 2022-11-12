@@ -6,26 +6,47 @@ import time
 
 
 if len(sys.argv) == 8:
-    seed = int(sys.argv[1])
-    h = int(sys.argv[2])
-    itereaciones = int(sys.argv[3])
-    tasa_evap = int(sys.argv[4])
-    importancia_heuristica = float(sys.argv[5])
-    q0 = int(sys.argv[6])
-    archivo = str(sys.argv[7])
-    print('Semilla: ', seed)
-    print('Tamaño poblacion: ', h)
-    print('Numero iteraciones: ', itereaciones)
-    print('Tasa de evaporacion: ', tasa_evap)
-    print('Peso del valor de heuristica: ', importancia_heuristica)
-    print('Probabilidad de exploracion: ', q0)
-    print('Matriz: ', archivo)
+    Seed = int(sys.argv[1])
+    Tamaño_colonia = int(sys.argv[2])
+    Iteraciones = int(sys.argv[3])
+    Tasa_evap = int(sys.argv[4])
+    Peso_heuristica = float(sys.argv[5])
+    Probabilidad_mínima = int(sys.argv[6])
+    Archivo_entrada = str(sys.argv[7])
+    print('Semilla: ', Seed)
+    print('Tamaño poblacion: ', Tamaño_colonia)
+    print('Numero iteraciones: ', Iteraciones)
+    print('Tasa de evaporacion: ', Tasa_evap)
+    print('Peso del valor de heuristica: ', Peso_heuristica)
+    print('Probabilidad de exploracion: ', Probabilidad_mínima)
+    print('Matriz: ', Archivo_entrada)
+    
+    if(Seed < 0):
+        print("Error: El número de la semilla debe ser positivo\nIngrese un número de semilla positivo")
+        sys.exit(0)
+    if(Tamaño_colonia <= 1):
+        print("Error: El tamaño de la colonia debe ser mayor a 1\nIngrese un tamaño de colonia mayor a 1")
+        sys.exit(0)
+    if(Iteraciones <= 1):
+        print("Error: El número de iteraciones debe ser mayor a 1\nIngrese un número de iteraciones mayor a 1")
+        sys.exit(0)
+    if(Tasa_evap < 0 or Tasa_evap > 100):
+        print("Error: La tasa de evaporación debe ser entre 0 y 100\nIngrese una tasa de evaporación entre 0 y 100")
+        sys.exit(0)
+    if(Peso_heuristica < 2 or Peso_heuristica > 5):
+        print("Error: El factor heurístico debe ser entre 2 y 5\nIngrese un factor heurístico entre 2 y 5")
+        sys.exit(0)
+    if(Probabilidad_mínima < 0 or Probabilidad_mínima > 100):
+        print("Error: La probabilidad mínima debe ser entre 0 y 100\nIngrese una probabilidad mínima entre 0 y 100")
+        sys.exit(0)
 else:
+    print("Error: Los datos ingresados no son validos, ingrese los datos de la siguiente manera:")
+    print("python.exe .\Reinas.py Seed Tamaño_colonia Número_Iteraciones Tasa_evaporación Peso_heuristica Probabilidad_mínima Archivo_entrada")
     sys.exit(0)
 
-np.random.seed(seed)
-tasa_evap = tasa_evap/100
-q0 = q0/100
+np.random.seed(Seed)
+Tasa_evap = Tasa_evap/100
+Probabilidad_mínima = Probabilidad_mínima/100
 tiempo_proceso_ini = time.time()
 
 def Calcular_costo(n,s,c):
@@ -35,11 +56,11 @@ def Calcular_costo(n,s,c):
     return aux
 
 def Valor_FeromonaxHeuristica(heuristica, matriz_feromona, memoria,k):
-    TxN = memoria[k]*matriz_feromona[poblacion[k][i]]*(heuristica[poblacion[k][i]]**importancia_heuristica)
+    TxN = memoria[k]*matriz_feromona[poblacion[k][i]]*(heuristica[poblacion[k][i]]**Peso_heuristica)
     return TxN
 
 
-coordenadas = pd.read_table(archivo, header = None,delim_whitespace=True, skiprows=6, skipfooter=2, engine='python')
+coordenadas = pd.read_table(Archivo_entrada, header = None,delim_whitespace=True, skiprows=6, skipfooter=2, engine='python')
 coordenadas = coordenadas.drop(columns =0,axis=1).to_numpy()
 # print("Matriz Coordenadas: ")
 # print(coordenadas)
@@ -78,13 +99,13 @@ matriz_feromona = np.full_like(distancias,fill_value=Tij0,dtype=float)
 # print("Matriz feromona: ",matriz_feromona)
 # print("mejor: ", mejor_costo)
 generacion = 0
-while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 7544.3659):
+while generacion < Iteraciones and not (np.round(mejor_costo,decimals=4) == 7544.3659):
     generacion+=1
     print('Generacion: ',generacion)
     # Asignar randómicamente las hormigas en los vértices del grafo
-    poblacion = np.full((h, cant_variables), fill_value=-1, dtype=int)
+    poblacion = np.full((Tamaño_colonia, cant_variables), fill_value=-1, dtype=int)
     memoria = np.full_like(poblacion,1,dtype=int)
-    for i in range(h):
+    for i in range(Tamaño_colonia):
         aux = np.random.randint(cant_variables)
         poblacion[i][0] = aux
         memoria[i][aux] = 0
@@ -95,16 +116,16 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
 
 
     for i in range(cant_variables-1):
-        for k in range(h):
+        for k in range(Tamaño_colonia):
             #Seleccionar el próximo segmento en el grafo
-            if np.random.rand() <= q0:
+            if np.random.rand() <= Probabilidad_mínima:
                 TxN = Valor_FeromonaxHeuristica(heuristica,matriz_feromona,memoria,k)
                 j0 = np.random.choice(np.where(TxN == TxN.max())[0])
                 # print("j0", j0)
                 memoria[k][j0] = 0
                 poblacion[k][i+1]= j0
                 #Actualizar la feromona en cada segmento según la Ecuación. 4
-                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*Tij0)
+                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-Tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(Tasa_evap*Tij0)
                 matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
             else:
             #Ruleta
@@ -126,15 +147,15 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
                 memoria[k][pos[0][-1]+1] = 0
                 poblacion[k][i+1]= pos[0][-1]+1
                 #Actualizar la feromona en cada segmento según la Ecuación. 4
-                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(tasa_evap*Tij0)
+                matriz_feromona[poblacion[k][i]][poblacion[k][i+1]] = ((1-Tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i+1]])+(Tasa_evap*Tij0)
                 matriz_feromona[poblacion[k][i+1]][poblacion[k][i]] = matriz_feromona[poblacion[k][i]][poblacion[k][i+1]]
-            matriz_feromona[poblacion[k][-1]][poblacion[k][0]] = ((1-tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(tasa_evap*Tij0)
+            matriz_feromona[poblacion[k][-1]][poblacion[k][0]] = ((1-Tasa_evap)*matriz_feromona[poblacion[k][i]][poblacion[k][i]])+(Tasa_evap*Tij0)
             matriz_feromona[poblacion[k][0]][poblacion[k][-1]] = matriz_feromona[poblacion[k][-1]][poblacion[k][0]]
         # print("Memoria: ")
         # print(memoria)
     
     #Actualizar la mejor solución del proceso hasta la iteración actual
-    for i in range(h):
+    for i in range(Tamaño_colonia):
         aux = Calcular_costo(cant_variables,poblacion[i][:],distancias)
         # print("aux: ", aux)
         if aux < mejor_costo:
@@ -148,9 +169,9 @@ while generacion < itereaciones and not (np.round(mejor_costo,decimals=4) == 754
             posicion_mejor = int(posicion_mejor[0])
             if(posicion_mejor < cant_variables-1): 
                 if((mejor_solucion[posicion_mejor+1]) == j):
-                    matriz_feromona[i][j] = ((1-tasa_evap)*matriz_feromona[i][j]) + (tasa_evap*(1/mejor_costo))
+                    matriz_feromona[i][j] = ((1-Tasa_evap)*matriz_feromona[i][j]) + (Tasa_evap*(1/mejor_costo))
                 else:
-                    matriz_feromona[i][j] = ((1-tasa_evap)*matriz_feromona[i][j]) + 0   
+                    matriz_feromona[i][j] = ((1-Tasa_evap)*matriz_feromona[i][j]) + 0   
 
     
 

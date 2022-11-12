@@ -23,7 +23,7 @@
 
 - Para ejecutar el codigo se debe ejecutar el siguiente comando: 
 ```
-python ./n-reinas.py Seed Tamaño_colonia Número_Iteraciones Tasa_evaporación Factor_euristica Probabilidad_exploración Archivo_entrada
+python ./n-reinas.py Seed Tamaño_colonia Número_Iteraciones Tasa_evaporación Peso_heuristica Probabilidad_mínima Archivo_entrada
 ```
 
 
@@ -32,8 +32,8 @@ python ./n-reinas.py Seed Tamaño_colonia Número_Iteraciones Tasa_evaporación 
     - ***Tamaño_colonia***, el cuál sera un número entero mayor que 1.
     - ***Número_Iteraciones***, el cuál sera un número entero a criterio del usuario.
     - ***Tasa_evaporación***, el cuál sera un número entero entre 0 y 100 (10%).
-    - ***Factor_euristica***, el cuál sera un número real entre 2 y 5 (2,5).
-    - ***Probabilidad_exploración***, el cuál sera un número real entre 0 y 100 (90%).
+    - ***Peso_heuristica***, el cuál sera un número real entre 2 y 5 (2,5).
+    - ***Probabilidad_mínima***, el cuál sera un número real entre 0 y 100 (90%).
     - ***Archivo_entrada***, nombre del archivo con las coordenadas de los puntos (berlin52.txt).
 
 
