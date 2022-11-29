@@ -1,8 +1,8 @@
-from traceback import print_tb
 import numpy as np
 import pandas as pd
 import sys 
 import time
+import igraph as ig
 
 
 if len(sys.argv) == 8:
@@ -185,3 +185,26 @@ print(mejor_solucion)
 print("Mejor costo: ", (np.round(mejor_costo,decimals=4)))
 tiempo_proceso_fin = time.time()
 print("Tiempo de busqueda: ", round(tiempo_proceso_fin-tiempo_proceso_ini, 3), "segundos")
+
+def imprimeGrafo(tam,sol):
+    etiqueta = [x for x in range(tam)]
+    lista = []
+    for i in range(tam-1):
+        par = []
+        par.append(sol[i])
+        par.append(sol[i+1])
+        lista.append(par)
+    lista.append([sol[tam-1],sol[0]])
+    color = ['red'] * cant_variables
+    color[lista[0][0]] = 'blue'
+    g = ig.Graph(n = tam, directed=True)
+    g.add_edges(lista)
+    g.vs["label"] = etiqueta
+    g.vs["color"] = color
+    g.vs["label_size"] = 6
+    g.vs["size"] = 12
+    g.es["edge_size"] = 2
+    return g
+
+mc = ig.Layout(coords=coordenadas.tolist())
+ig.plot(imprimeGrafo(cant_variables,mejor_solucion),layout=mc)
